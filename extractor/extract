@@ -1,0 +1,92 @@
+#! /usr/bin/perl
+
+# --------------------------------------------------------------------
+# Extract the bytecodes of the given class and dump them in a
+# formatted fashion to an output file 
+#
+# Parameters: $_[0] = class filename
+#             $_[1] = output file handle
+# --------------------------------------------------------------------
+
+sub extract
+{
+  local $c;
+  local $name;
+  local $i = 0;
+  local $OH = $_[1];
+  
+  open(FH, $_[0]) or die "Error: can't open " , $_[0] , "\n";
+  
+  $_[0] =~ s/[\/\$]/\_/g; m/(\w+)\../;
+  print OH $+ , " :: [Int]\n";
+  print OH $+ , " = [\n\t";
+  
+  while(read(FH, $local, 1))
+  {
+    print OH sprintf("0x%02X",ord($local)) , eof(FH)? "" : ", ";
+    
+    if (++$i % 12 == 0)
+    {
+      print OH "\n\t";
+    }
+  }
+  
+  print OH "]\n\n";
+  
+  close(FH);
+}
+
+
+# --------------------------------------------------------------------
+# Generate a formatted list associating the processed file names to
+# the corresponding bytecode list function
+#
+# Parameters: $_[0] = class filename
+#             $_[1] = output file handle
+# --------------------------------------------------------------------
+
+sub genlist
+{
+  local $clsname;
+  local $OH = $_[1];
+  
+  $_[0] =~ s/[\/\$]/\_/g; 
+  $_[0] =~ m/(\w+)\../;
+  
+  print OH "\t(\"" , $+ , "\", " , $+ , ")"; 
+}
+
+
+# --------------------------------------------------------------------
+# The main routine
+# --------------------------------------------------------------------
+
+if ($#ARGV < 1)
+{
+  print "Usage: extract.pl output_file file1.class ...\n";
+  exit 1;
+}
+
+open(OH, ">".$ARGV[0]) or die "Can't create " , $ARGV[0] , "\n";
+
+$ARGV[0] =~ s/\.(.*)//;
+print OH "module " , ucfirst($ARGV[0]) , " where\n\n";
+
+shift @ARGV;
+
+foreach(@ARGV)
+{
+  extract($_, OH);
+}
+
+print OH  "classes = [\n";
+
+for($i = 0; $i <= $#ARGV; $i++)
+{
+  genlist($ARGV[$i], OH);
+  print OH + $i < $#ARGV? ",\n" : "]\n";
+}
+
+close(FH);
+
+__END__

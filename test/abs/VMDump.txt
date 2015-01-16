@@ -1,0 +1,113 @@
+VMDef ["java/lang/Object"
+N
+[]
+Init
+,"java/lang/Comparable"
+S 0
+[]
+UnInit
+,"java/lang/String"
+S 0
+[S 1]
+UnInit
+,"java/lang/Throwable"
+S 0
+[]
+UnInit
+,"java/lang/Exception"
+S 3
+[]
+UnInit
+,"java/lang/Error"
+S 3
+[]
+UnInit
+,"java/lang/LinkageError"
+S 5
+[]
+UnInit
+,"java/lang/ClassFormatError"
+S 6
+[]
+UnInit
+,"java/lang/NoClassDefFoundError"
+S 6
+[]
+UnInit
+,"java/lang/ClassCircularityError"
+S 6
+[]
+UnInit
+,"java/lang/IncompatibleClassChangeError"
+S 6
+[]
+UnInit
+,"java/lang/UnsupportedClassVersionError"
+S 7
+[]
+UnInit
+,"java/lang/IllegalAccessError"
+S 10
+[]
+UnInit
+,"java/lang/NoSuchFieldError"
+S 10
+[]
+UnInit
+,"java/lang/NoSuchMethodError"
+S 10
+[]
+UnInit
+,"java/lang/AbstractMethodError"
+S 10
+[]
+UnInit
+,"java/lang/RuntimeException"
+S 4
+[]
+UnInit
+,"java/lang/ClassCastException"
+S 16
+[]
+UnInit
+,"java/lang/NullPointerException"
+S 16
+[]
+UnInit
+,"java/lang/IndexOutOfBoundsException"
+S 16
+[]
+UnInit
+,"java/lang/ArrayIndexOutOfBoundsException"
+S 19
+[]
+UnInit
+,"java/lang/InstantiationError"
+S 10
+[]
+UnInit
+,"java/lang/NegativeArraySizeException"
+S 16
+[]
+UnInit
+,"java/lang/ArithmeticException"
+S 16
+[]
+UnInit
+,"abs/A"
+S 0
+[]
+Init
+,"abs/B"
+S 24
+[]
+Init
+,"java/lang/Cloneable"
+S 0
+[]
+UnInit
+,"[Ljava/lang/String;"
+S 0
+[S 26]
+] [(2,Obj 25 [I 17])
+,(1,Arr 27 0 [])] [] 0 []

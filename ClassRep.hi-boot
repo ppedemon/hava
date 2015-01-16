@@ -1,0 +1,5 @@
+__interface "Main" ClassRep 63 [55 1] 0 where
+__export  ClassRep Class getName replace;
+replace :: __forall a => [a] -> PrelBase.Int -> a -> [a];
+getName :: Class -> PrelBase.String;
+data Class ;

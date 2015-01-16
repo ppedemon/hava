@@ -1,0 +1,175 @@
+\documentclass[english,a4paper,11pt]{article}
+\usepackage{babel}
+\usepackage{ifthen}
+\usepackage{amssymb}
+\usepackage[ansinew]{inputenc}
+
+% For PDF output
+%\pdfcompresslevel=9
+%\pdfoutput=1
+
+\begin{document}
+
+\title{Hava, a Purely Functional \\ Java Virtual Machine}
+\author{
+  Pablo J. Pedemonte \\\\
+  \small{Laboratorio de Investigación y Formación en Informática
+  Avanzada}          \\
+  \small{C.C. 11, La Plata, 1900. Buenos Aires, República Argentina} \\
+  \small{\texttt{ppedemon@sol.info.unlp.edu.ar}}
+}
+\date{}
+
+\maketitle
+
+\section{What is Hava}
+
+Hava is a Java virtual machine subset implemented fully in
+Haskell. It is very inefficient, due to that fact that it doesn't
+deal directly with pointers or memory, nor uses unboxed data
+types or any other mechanism for speeding up pure lazy functional
+programs. In addition, it is implemented in a very naive fashion.
+All the data structures used for its implementation have linear
+time complexity. The only exception are method bytecodes, that
+were represented using arrays -- otherwise, executing a method
+would have a complexity proportional to the square of the
+methods's length! However, in spite of its inefficiency, it is a
+rather complete JVM implementation. It supports the full bytecode
+set as defined in the Java Virtual Machine Specification
+\cite{jspec}, except for two operations: acquiring and releasing
+locks.
+
+In our opinion, this work has two main contributions. On one
+hand, it shows that it is possible to implement a bytecode
+interpreter with a strong imperative flavor (at least as
+suggested by its specification) with a pure functional language.
+On the other hand, we think it is valuable from an academic point
+of view. Our implementation is very simple (it consists of 21
+Haskell modules, with an average length of 250 lines each), what
+makes it possible to understand the inner details of a commercial
+object oriented language implementation, such as virtual method
+invocation, class loading, exception handling, etc.
+
+\section{What is \emph{not} Hava}
+
+Definitely, hava is not a commercial Java virtual machine. It is
+slow, and lacks some fundamental features like multithreading,
+JNI, and JIT compilation. Due to the lack of JNI support, the
+core library (the \texttt{java.lang} package) is limited to a
+very few classes, most of them simplified with respect to the
+original functionality offered by Sun's implementation.
+
+\section{Comparison with Sun's JVM}
+
+The functionality provided by the commercial implementation issued
+by Sun that can be found also in hava is depicted below:
+
+\begin{itemize}
+\item Incremental class loading
+\item Full bytecode support (except \textit{monitorenter} and \textit{monitorexit})
+\item Exception handling
+\item Finally blocks
+\item Array management
+\end{itemize}
+
+\noindent
+%
+The features that hava lacks compared to Sun's Java virtual
+machine are:
+
+\begin{itemize}
+\item Concurrency and multithreading
+\item JNI support (this is the most serious limitation, as it inhibits the
+use of many classes of the Java class library)
+\item Bytecode verification (this could be added in the future)
+\item Garbage Collection (it has no sense in our implementation, but it could be
+implemented)
+\item Access to classes in jar files
+\item Reflection
+\end{itemize}
+
+\noindent
+%
+Some features provided by hava have some differences when
+compared with their Sun's counterparts. For instance, the class
+loading process is a very simplified version of the original, and
+the same happens with the class initialization routine.
+
+It is interesting to note that we could support concurrency by
+using the extensions provided by Haskell. This would be quite
+difficult and would requiere some major changes on our
+implementation. However, with care and keeping the hacker spirit
+on the rise, it could be accomplished.
+
+Moreover, we could provide JNI emulation by allowing hava to call
+Haskell functions directly. This would be relatively easy to do,
+because no complex marshalling/unmarshalling of parameters would
+be needed, as our virtual machine is completely implemented in
+Haskell. The biggest drawback is that we will need to implement
+the whole Java libraries in Haskell, so this is a lot of work
+anyway.
+
+\section{How to Use It}
+Hava consists of a PERL front end (called \texttt{hava}), and the
+Haskell core (called \texttt{vmmain}). First of all, you should
+edit the front end and change the \texttt{HAVA\_HOME} variable to
+point to the root of the hava installation (In the file is
+commented where, and how to do that). The front end supports the
+following parameters:
+
+\begin{enumerate}
+\item \texttt{-cp|-claspath}: define a list of directories as the
+classpath (they must be separated by the '\texttt{:}' character)
+\item \texttt{-?|-h|-help}: print help about the program's usage
+\item \texttt{-v}: show the program's version
+\end{enumerate}
+
+\noindent
+%
+For instance, if you have a class named \texttt{B}, in the
+package \texttt{test.methods} in the \texttt{/home/hava}
+directory, you should invoke it as follows:
+
+\begin{tabbing}
+\qquad\texttt{hava -cp /home/hava test.methods.B}
+\end{tabbing}
+
+\section{How to Compile It}
+
+You need the \textit{Glasgow Haskell Compiler}, version 5.00.2 or
+higher. The source files are located in the hava root directory,
+as well as the makefile script. In order to recompute dependencies
+between modules, you must execute the following:
+
+\begin{tabbing}
+\qquad\texttt{make}
+\end{tabbing}
+
+\noindent
+%
+In order to compile it, execute this:
+
+\begin{tabbing}
+\qquad\texttt{make vmmain}
+\end{tabbing}
+
+\noindent
+%
+There are some circular dependencies between modules. Therefore,
+is \emph{not} recommended to delete the \texttt{.hi} files before
+compilation. Hopefully, they are platform independent and will
+work in your platform directly, or with minor modifications that
+you can apply easily over those files (such as changing the
+compiler version number).
+
+\vspace{2pc}
+\begin{center}
+\begin{Large}More, more, more!\ldots\end{Large}
+\end{center}
+
+\begin{thebibliography}{jspec}
+\bibitem[1]{jspec}T. Lindholm and F. Yellin. \textit{The Java Virtual
+Machine Specification, 2nd. Edition}. Addison--Wesley, 1999.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,98 @@
+#! /usr/bin/perl
+
+# -------------------------------------------------------------------
+# A perl script for invoking the Haskell Java Virtual Machine (aka 
+# hava). Despite the poor man's command line parsing, it seems to 
+# work fine.
+#
+# In order to get things working, you MUST redefine the HAVA_HOME
+# variable to point to the root directory of the hava installation.
+#
+# Author:        Pablo J. Pedemonte
+# Last revision: 07-Sep-2002
+# -------------------------------------------------------------------
+
+# This variable MUST point to the root directory of the hava installation
+$HAVA_HOME = "/home/pablo/hava";
+
+# From now on, you must leave the script unchanged
+
+foreach(@ARGV) {
+
+  if ($CLSP == 1) {
+    $CLASSPATH = $_;
+    $CLSP = 0;
+    next;
+  }
+
+  SWITCH: {
+    if (/\-cp|\-classpath/ && $ARGC == 0) { $CLSP = 1; last SWITCH; }
+    if (/\-h|\-\?|\-help/  && $ARGC == 0) { $HELP = 1; last SWITCH; }
+    if (/\-v/ && $ARGC == 0)              { $VERS = 1; last SWITCH; }
+    if (/\-./ && $ARGC == 0) 
+    { 
+      print "Invalid option: " , $_ , " (invoke with -h for help)\n"; 
+      exit 1;
+    }
+    
+    $ARGC++;
+    if ($ARGC == 1) {
+       $MAIN = $_;
+    }
+  }
+}
+
+if ($HELP == 1) {
+
+print <<END_OF_HELP;
+  Usage: hava [-options] class args
+    where options are:
+    -v             print version info\
+    -h -? -help    print this help message
+    -cp -classpath <directories separated by :>
+      set search path for application classes
+      
+END_OF_HELP
+  
+  exit 0;
+}
+
+if ($VERS == 1){
+
+print <<END_OF_VERS;
+  hava: A functional JVM Implementation, version 0.001
+  An exprimental toy java virtual machine written in Haskell
+  (C) Pablo J. Pedemonte, 2002
+
+END_OF_VERS
+  
+  exit 0;
+}
+
+if ($CLSP == 1) {
+  print "Missing classpath (invoke with -h for help)\n";
+  exit 1;
+}
+
+if ($ARGC == 0){
+  print "Missing main class (invoke with -h for help)\n";
+  exit 1;
+}
+
+if (length($CLASSPATH) != 0) { 
+    shift @ARGV; 
+    shift @ARGV;
+    $CLASSPATH = ":" . $CLASSPATH; 
+}
+
+$CLASSPATH = $HAVA_HOME . "/lib" . $CLASSPATH . ":.";
+$ENV{CLASSPATH} = $CLASSPATH;
+
+if (! -X './vmmain') {
+  die "Virtual machine not found: can't read or execute ./vmmain\n";
+}
+
+exec './vmmain' , @ARGV;
+
+__END__
+
